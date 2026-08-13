@@ -250,18 +250,34 @@ const surpriseVideo = document.getElementById("surprise-video");
 const surprisePlay = document.getElementById("surprise-play");
 const closingWrap = document.getElementById("closing-wrap");
 const replayBtn = document.getElementById("replay-btn");
+const volumeToast = document.getElementById("volume-toast");
 
 const SURPRISE_VIDEOS = ["intro-surpresa.mp4", "surpresa.mp4"];
 const MAIN_VIDEO_INDEX = SURPRISE_VIDEOS.length - 1;
 let surpriseIndex = 0;
+let volumeToastTimer = 0;
 
-async function playCurrentSurprise() {
+function showVolumeToast() {
+  volumeToast.classList.add("is-visible");
+  window.clearTimeout(volumeToastTimer);
+  volumeToastTimer = window.setTimeout(() => {
+    volumeToast.classList.remove("is-visible");
+  }, 5000);
+}
+
+function hideVolumeToast() {
+  window.clearTimeout(volumeToastTimer);
+  volumeToast.classList.remove("is-visible");
+}
+
+async function playCurrentSurprise({ remindVolume = false } = {}) {
   surpriseVideo.muted = false;
   surpriseVideo.volume = 1;
   surpriseVideo.classList.remove("is-fading");
   try {
     await surpriseVideo.play();
     surprisePlay.classList.add("is-hidden");
+    if (remindVolume) showVolumeToast();
   } catch {
     surprisePlay.classList.remove("is-hidden");
   }
@@ -269,10 +285,11 @@ async function playCurrentSurprise() {
 
 async function playSurpriseVideo() {
   surpriseVideo.src = SURPRISE_VIDEOS[surpriseIndex];
-  await playCurrentSurprise();
+  await playCurrentSurprise({ remindVolume: true });
 }
 
 function showClosing() {
+  hideVolumeToast();
   surpriseVideo.classList.add("is-fading");
   window.setTimeout(() => {
     closingWrap.classList.add("is-visible");
@@ -296,11 +313,11 @@ async function replayMainVideo() {
   surpriseIndex = MAIN_VIDEO_INDEX;
   surpriseVideo.src = SURPRISE_VIDEOS[MAIN_VIDEO_INDEX];
   surpriseVideo.currentTime = 0;
-  await playCurrentSurprise();
+  await playCurrentSurprise({ remindVolume: true });
 }
 
 surprisePlay.addEventListener("click", () => {
-  playCurrentSurprise();
+  playCurrentSurprise({ remindVolume: true });
 });
 
 replayBtn.addEventListener("click", () => {
