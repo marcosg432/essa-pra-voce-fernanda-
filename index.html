@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Você me ama?</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Outfit:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <video
+      class="bg-video"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="auto"
+    >
+      <source src="fundo.mp4" type="video/mp4" />
+    </video>
+    <div class="bg-overlay" aria-hidden="true"></div>
+
+    <main class="stage">
+      <h1 class="question">Você me ama? <span class="heart" aria-hidden="true">❤️</span></h1>
+
+      <div class="actions">
+        <button type="button" class="btn btn-yes" id="btn-sim">SIM ❤️</button>
+        <span class="no-slot" id="no-slot">
+          <button type="button" class="btn btn-no" id="btn-nao" tabindex="-1">NÃO</button>
+        </span>
+      </div>
+    </main>
+
+    <section class="loading-screen" id="loading-screen" aria-hidden="true">
+      <canvas id="fireworks" class="fireworks" aria-hidden="true"></canvas>
+      <div class="loading-ui">
+        <p class="loading-label">
+          CARREGANDO... <span id="loading-percent">0%</span>
+        </p>
+        <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress-track">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="questions-screen" id="questions-screen" aria-hidden="true">
+      <div class="questions-inner">
+        <div class="quiz-intro" id="quiz-intro">
+          <h2 class="quiz-intro-title" id="quiz-intro-title"></h2>
+          <p class="quiz-intro-subtitle" id="quiz-intro-subtitle"></p>
+        </div>
+
+        <div class="quiz-active" id="quiz-active" hidden>
+          <header class="quiz-header">
+            <p class="quiz-unlock-label">🔐 Desbloqueando surpresa...</p>
+            <div
+              class="unlock-track"
+              role="progressbar"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow="0"
+              id="unlock-track"
+            >
+              <div class="unlock-fill" id="unlock-fill"></div>
+            </div>
+            <p class="quiz-counter" id="quiz-counter">Pergunta 1 de 4</p>
+          </header>
+
+          <div class="quiz-card" id="quiz-card">
+            <h3 class="quiz-question" id="quiz-question"></h3>
+            <div class="quiz-options" id="quiz-options"></div>
+            <figure class="quiz-memory" id="quiz-memory" hidden>
+              <img id="quiz-memory-img" alt="Nossa primeira foto juntos" />
+            </figure>
+            <p class="quiz-feedback" id="quiz-feedback" aria-live="polite"></p>
+          </div>
+        </div>
+
+        <div class="quiz-complete" id="quiz-complete" hidden>
+          <div class="lock-scene" id="lock-scene" aria-hidden="true">
+            <div class="lock-icon locked" id="lock-icon">
+              <span class="lock-body">🔒</span>
+              <span class="lock-open">🔓</span>
+            </div>
+          </div>
+          <canvas id="unlock-particles" class="unlock-particles" aria-hidden="true"></canvas>
+          <div class="surprise-ready" id="surprise-ready" aria-hidden="true"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="surprise-screen" id="surprise-screen" aria-hidden="true">
+      <video
+        id="surprise-video"
+        class="surprise-video"
+        playsinline
+        preload="auto"
+      >
+        <source src="surpresa.mp4" type="video/mp4" />
+      </video>
+      <button type="button" class="surprise-play" id="surprise-play">
+        <span class="surprise-play-title">Sua surpresa está pronta</span>
+        <span class="surprise-play-hint">Toque para ver ❤️</span>
+      </button>
+      <p class="closing-message" id="closing-message">
+        E se depender de mim,<br />
+        essa história ainda vai ter muitos capítulos.
+      </p>
+    </section>
+
+    <script src="questions-config.js"></script>
+    <script src="questions.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
