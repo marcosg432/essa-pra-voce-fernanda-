@@ -248,11 +248,17 @@ window.startQuestions = startQuestions;
 const surpriseScreen = document.getElementById("surprise-screen");
 const surpriseVideo = document.getElementById("surprise-video");
 const surprisePlay = document.getElementById("surprise-play");
-const closingMessage = document.getElementById("closing-message");
+const closingWrap = document.getElementById("closing-wrap");
+const replayBtn = document.getElementById("replay-btn");
 
-async function playSurpriseVideo() {
+const SURPRISE_VIDEOS = ["intro-surpresa.mp4", "surpresa.mp4"];
+const MAIN_VIDEO_INDEX = SURPRISE_VIDEOS.length - 1;
+let surpriseIndex = 0;
+
+async function playCurrentSurprise() {
   surpriseVideo.muted = false;
   surpriseVideo.volume = 1;
+  surpriseVideo.classList.remove("is-fading");
   try {
     await surpriseVideo.play();
     surprisePlay.classList.add("is-hidden");
@@ -261,21 +267,55 @@ async function playSurpriseVideo() {
   }
 }
 
+async function playSurpriseVideo() {
+  surpriseVideo.src = SURPRISE_VIDEOS[surpriseIndex];
+  await playCurrentSurprise();
+}
+
+function showClosing() {
+  surpriseVideo.classList.add("is-fading");
+  window.setTimeout(() => {
+    closingWrap.classList.add("is-visible");
+  }, 280);
+}
+
+function hideClosing() {
+  closingWrap.classList.remove("is-visible");
+}
+
 function revealSurprise() {
+  surpriseIndex = 0;
+  hideClosing();
   surpriseScreen.classList.add("is-active");
   surpriseScreen.setAttribute("aria-hidden", "false");
   playSurpriseVideo();
 }
 
+async function replayMainVideo() {
+  hideClosing();
+  surpriseIndex = MAIN_VIDEO_INDEX;
+  surpriseVideo.src = SURPRISE_VIDEOS[MAIN_VIDEO_INDEX];
+  surpriseVideo.currentTime = 0;
+  await playCurrentSurprise();
+}
+
 surprisePlay.addEventListener("click", () => {
-  playSurpriseVideo();
+  playCurrentSurprise();
 });
 
-surpriseVideo.addEventListener("ended", () => {
-  surpriseVideo.classList.add("is-fading");
-  window.setTimeout(() => {
-    closingMessage.classList.add("is-visible");
-  }, 280);
+replayBtn.addEventListener("click", () => {
+  replayMainVideo();
+});
+
+surpriseVideo.addEventListener("ended", async () => {
+  if (surpriseIndex < MAIN_VIDEO_INDEX) {
+    surpriseIndex += 1;
+    surpriseVideo.src = SURPRISE_VIDEOS[surpriseIndex];
+    await playCurrentSurprise();
+    return;
+  }
+
+  showClosing();
 });
 
 window.revealSurprise = revealSurprise;

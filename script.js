@@ -19,6 +19,23 @@ let isFixed = false;
 let lastFleeAt = 0;
 let celebrating = false;
 
+function viewportBox() {
+  const vv = window.visualViewport;
+  return {
+    width: vv ? vv.width : window.innerWidth,
+    height: vv ? vv.height : window.innerHeight,
+  };
+}
+
+function edgePadding() {
+  const isPhone = Math.min(window.innerWidth, window.innerHeight) < 520;
+  return {
+    x: isPhone ? 12 : PADDING,
+    y: isPhone ? 12 : PADDING,
+    bottom: isPhone ? 28 : PADDING,
+  };
+}
+
 function buttonSize() {
   const rect = noBtn.getBoundingClientRect();
   return { width: rect.width, height: rect.height };
@@ -29,23 +46,28 @@ function clamp(value, min, max) {
 }
 
 function keepInViewport(x, y, width, height) {
-  const maxX = Math.max(PADDING, window.innerWidth - width - PADDING);
-  const maxY = Math.max(PADDING, window.innerHeight - height - PADDING);
+  const view = viewportBox();
+  const pad = edgePadding();
+  const maxX = Math.max(pad.x, view.width - width - pad.x);
+  const maxY = Math.max(pad.y, view.height - height - pad.bottom);
 
   return {
-    x: clamp(x, PADDING, maxX),
-    y: clamp(y, PADDING, maxY),
+    x: clamp(x, pad.x, maxX),
+    y: clamp(y, pad.y, maxY),
   };
 }
 
 function minEscapeDistance(width, height) {
-  const shortest = Math.min(window.innerWidth, window.innerHeight);
-  return clamp(shortest * 0.32, 110, 220) + Math.max(width, height) * 0.35;
+  const view = viewportBox();
+  const shortest = Math.min(view.width, view.height);
+  return clamp(shortest * 0.28, 90, 200) + Math.max(width, height) * 0.3;
 }
 
 function pickPosition(cursorX, cursorY, width, height) {
-  const maxX = Math.max(PADDING, window.innerWidth - width - PADDING);
-  const maxY = Math.max(PADDING, window.innerHeight - height - PADDING);
+  const view = viewportBox();
+  const pad = edgePadding();
+  const maxX = Math.max(pad.x, view.width - width - pad.x);
+  const maxY = Math.max(pad.y, view.height - height - pad.bottom);
   const minDist = minEscapeDistance(width, height);
 
   let best = null;
@@ -53,8 +75,8 @@ function pickPosition(cursorX, cursorY, width, height) {
 
   for (let i = 0; i < 36; i += 1) {
     const candidate = {
-      x: PADDING + Math.random() * Math.max(1, maxX - PADDING),
-      y: PADDING + Math.random() * Math.max(1, maxY - PADDING),
+      x: pad.x + Math.random() * Math.max(1, maxX - pad.x),
+      y: pad.y + Math.random() * Math.max(1, maxY - pad.y),
     };
 
     const centerX = candidate.x + width / 2;
@@ -154,6 +176,16 @@ noBtn.addEventListener("pointerenter", (event) => {
 noBtn.addEventListener("pointerdown", blockInteraction);
 noBtn.addEventListener("click", blockInteraction);
 noBtn.addEventListener("contextmenu", blockInteraction);
+noBtn.addEventListener(
+  "touchstart",
+  (event) => {
+    event.preventDefault();
+    const touch = event.touches[0];
+    if (celebrating || !touch) return;
+    flee(touch.clientX, touch.clientY);
+  },
+  { passive: false }
+);
 
 document.addEventListener("pointermove", (event) => {
   if (celebrating) return;
@@ -191,6 +223,12 @@ window.addEventListener("resize", () => {
   noBtn.style.left = `${current.x}px`;
   noBtn.style.top = `${current.y}px`;
 });
+
+if (window.visualViewport) {
+  window.visualViewport.addEventListener("resize", () => {
+    window.dispatchEvent(new Event("resize"));
+  });
+}
 
 const FIREWORK_COLORS = [
   "#fff5f7",

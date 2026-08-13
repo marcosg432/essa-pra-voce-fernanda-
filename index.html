@@ -2,7 +2,13 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#1a0b11" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <title>Você me ama?</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -19,6 +25,7 @@
       muted
       loop
       playsinline
+      webkit-playsinline
       preload="auto"
     >
       <source src="fundo.mp4" type="video/mp4" />
@@ -99,18 +106,23 @@
         id="surprise-video"
         class="surprise-video"
         playsinline
+        webkit-playsinline
         preload="auto"
-      >
-        <source src="surpresa.mp4" type="video/mp4" />
-      </video>
+        src="intro-surpresa.mp4"
+      ></video>
       <button type="button" class="surprise-play" id="surprise-play">
         <span class="surprise-play-title">Sua surpresa está pronta</span>
         <span class="surprise-play-hint">Toque para ver ❤️</span>
       </button>
-      <p class="closing-message" id="closing-message">
-        E se depender de mim,<br />
-        essa história ainda vai ter muitos capítulos.
-      </p>
+      <div class="closing-wrap" id="closing-wrap">
+        <p class="closing-message" id="closing-message">
+          E se depender de mim,<br />
+          essa história ainda vai ter muitos capítulos.
+        </p>
+        <button type="button" class="replay-btn" id="replay-btn">
+          Assistir novamente ❤️
+        </button>
+      </div>
     </section>
 
     <script src="questions-config.js"></script>
